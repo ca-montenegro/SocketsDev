@@ -8,13 +8,13 @@ def Main():
     s = socket.socket()
     s.connect((host, port))
 
-    filename = input("Filename? -> ")
+    filename = raw_input("Filename? -> ")
     if filename != 'q':
         s.send(filename)
         data = s.recv(1024)
         if data[:6] == 'EXISTS':
             filesize = long(data[6:])
-            message = input("File exists, " + str(filesize) + "Bytes, download? (Y/N)? -> ")
+            message = raw_input("File exists, " + str(filesize) + "Bytes, download? (Y/N)? -> ")
             if message == 'Y':
                 s.send("OK")
                 f = open('new_' + filename, 'wb')
