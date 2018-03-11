@@ -1,5 +1,7 @@
 import socket
 
+from numpy import long
+
 
 def Main():
     host = '127.0.0.1'
@@ -7,16 +9,16 @@ def Main():
 
     s = socket.socket()
     s.connect((host, port))
-
-    filename = raw_input("Filename? -> ")
+    print(s.recv(1024))
+    filename = input("Filename? -> ")
     if filename != 'q':
-        s.send(filename)
+        s.send(bytes(filename,encoding="ascii"))
         data = s.recv(1024)
-        if data[:6] == 'EXISTS':
-            filesize = long(data[6:])
-            message = raw_input("File exists, " + str(filesize) + "Bytes, download? (Y/N)? -> ")
+        if data[:6] == b'EXISTS':
+            filesize = long(data[7:])
+            message = input("File exists, " + str(filesize) + "Bytes, download? (Y/N)? -> ")
             if message == 'Y':
-                s.send("OK")
+                s.send(b"OK")
                 f = open('new_' + filename, 'wb')
                 data = s.recv(1024)
                 totalRecv = len(data)
@@ -36,3 +38,4 @@ def Main():
 
 if __name__ == '__main__':
     Main()
+

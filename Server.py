@@ -4,11 +4,13 @@ import os
 
 
 def RetrFile(name, sock):
+    sock.send(b"Connected to server")
     filename = sock.recv(1024)
     if os.path.isfile(filename):
-        sock.send("EXISTS " + str(os.path.getsize(filename)))
+        strSend = "EXISTS " + str(os.path.getsize(filename))
+        sock.send(bytes(strSend,encoding="ascii"))
         userResponse = sock.recv(1024)
-        if userResponse[:2] == 'OK':
+        if userResponse[:2] == b'OK':
             with open(filename, 'rb') as f:
                 bytesToSend = f.read(1024)
                 sock.send(bytesToSend)
@@ -16,7 +18,7 @@ def RetrFile(name, sock):
                     bytesToSend = f.read(1024)
                     sock.send(bytesToSend)
     else:
-        sock.send("ERR ")
+        sock.send(b"ERR ")
 
     sock.close()
 
