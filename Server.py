@@ -2,20 +2,23 @@ import socket
 import threading
 import os
 
+BUFFER_SIZE_original = 1024
+BUFFER_SIZE_10 = 1126
+BUFFER_SIZE_500 = 5120
 
 def RetrFile(name, sock):
     sock.send(b"Connected to server")
-    filename = sock.recv(1024)
+    filename = sock.recv(BUFFER_SIZE_500)
     if os.path.isfile(filename):
         strSend = "EXISTS " + str(os.path.getsize(filename))
         sock.send(bytes(strSend,encoding="ascii"))
-        userResponse = sock.recv(1024)
+        userResponse = sock.recv(BUFFER_SIZE_500)
         if userResponse[:2] == b'OK':
             with open(filename, 'rb') as f:
-                bytesToSend = f.read(1024)
+                bytesToSend = f.read(BUFFER_SIZE_500)
                 sock.send(bytesToSend)
                 while bytesToSend != "":
-                    bytesToSend = f.read(1024)
+                    bytesToSend = f.read(BUFFER_SIZE_500)
                     sock.send(bytesToSend)
     else:
         sock.send(b"ERR ")
@@ -24,8 +27,8 @@ def RetrFile(name, sock):
 
 
 def Main():
-    host = '127.0.0.1'
-    port = 5000
+    host = '0.0.0.0'
+    port = 5009
 
     s = socket.socket()
     s.bind((host, port))
